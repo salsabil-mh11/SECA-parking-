@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Simulation Parking</title>
+  <title>SECA PARKING </title>
   <link rel="stylesheet" href="style.css" />
   <style>
     body {
@@ -62,7 +62,7 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       text-align: center;
       font-size: 14px;
-      display: none; /* caché par défaut */
+      display: none; 
     }
 
     .ticket .merci {
@@ -87,17 +87,17 @@
       font-weight: bold;
       font-size: 16px;
       margin-bottom: 10px;
-      display: none; /* caché par défaut */
+      display: none; 
     }
 
-    /* Style pour la popup message */
+   
     #message {
       display: none;
       position: fixed;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: #f39c12;
+      background: #85827e;
       color: white;
       padding: 10px 20px;
       border-radius: 5px;
@@ -107,14 +107,14 @@
   </style>
 </head>
 <body>
-  <!-- Popup détails modal -->
+  
 <div id="popup-details" style="
   display: none;
   position: fixed;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   background: white;
-  padding: 20px 30px;
+  padding: 20px 30px;   
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0,0,0,0.5);
   width: 320px;
@@ -132,7 +132,7 @@
   <button onclick="fermerDetails()" style="
     margin-top: 15px;
     padding: 8px 15px;
-    background: #e74c3c;
+    background: #878786;
     color: white;
     border: none;
     border-radius: 6px;
@@ -140,7 +140,7 @@
   ">Fermer</button>
 </div>
 
-<!-- Fond semi-transparent pour popup -->
+
 <div id="popup-overlay" style="
   display: none;
   position: fixed;
@@ -150,7 +150,8 @@
 "></div>
 
 
-  <!-- Barre de contrôle -->
+
+
   <div class="header">
     <button id="fermer-btn" onclick="fermerBarriere(event)" class="btn yellow">fermer la barrière</button>
     <button id="ouvrir-btn" onclick="ouvrirBarriere()" class="btn yellow">ouvrir la barrière</button>
@@ -160,11 +161,11 @@
 
 
 
-  <!-- Corps principal -->
   <div class="main-container">
     <canvas id="scene" width="900" height="500"></canvas>
 
-    <!-- Ticket à droite -->
+
+
 <div class="ticket-zone">
   <div class="immatriculation-box" id="immatriculation-box" style="display:none;">
     <span id="immatriculation-text">123-TN-456</span>
@@ -191,23 +192,23 @@
     <p><strong>Marque :</strong> <span id="detail-marque"></span></p>
     <p><strong>Modèle :</strong> <span id="detail-modele"></span></p>
     <p><strong>Couleur :</strong> <span id="detail-couleur"></span></p>
-    <button onclick="fermerDetails()" style="margin-top:10px; padding:5px 10px; border:none; background:#e74c3c; color:#fff; border-radius:5px; cursor:pointer;">Fermer</button>
+    <button onclick="fermerDetails()" style="margin-top:10px; padding:5px 10px; border:none; background:#cac7c6; color:#fff; border-radius:5px; cursor:pointer;">Fermer</button>
   </div>
 </div>
 
   </div>
 
-  <!-- Boutons action -->
+  
   <div class="controls">
     <button onclick="avancerVoiture()" class="btn green">AVANCER</button>
     <button onclick="arreterVoiture()" class="btn red">ARRÊTER</button>
     <button onclick="getTicket()" class="btn yellow">Get ticket</button>
   </div>
 
-  <!-- Message popup -->
+
   <div id="message"></div>
 
-  <!-- Script JS -->
+
   <script src="script.js"></script>
 </body>
 </html>
