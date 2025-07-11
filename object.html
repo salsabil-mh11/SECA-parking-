@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mouvement Objet</title>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+  }
+
+  #zone {
+    width: 100vw;
+    height: 100vh;
+    background-image: url('https://i.pinimg.com/736x/20/50/e6/2050e61dde59a5084e11d935fa3cafcb.jpg'); /* ciel */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #objet {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    left: 100px;
+    top: 100px;
+    transition: 0.1s;
+  }
+
+  #controls {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+  }
+
+  button {
+    padding: 10px 15px;
+    font-size: 16px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+
+  #compteur {
+    font-weight: bold;
+    font-size: 18px;
+    color: white;
+    text-shadow: 1px 1px 3px black;
+  }
+</style>
+<body>
+
+  <div id="zone">
+    <div id="controls">
+      <button onclick="sauter()">Sauter</button>
+      <span id="compteur">Sauts : 0</span>
+    </div>
+    <img src="b.png" alt="Voiture 1" id="objet">
+  </div>
+
+  <audio id="son" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+
+  <script>
+    const objet = document.getElementById('objet');
+    const compteur = document.getElementById('compteur');
+    const son = document.getElementById('son');
+
+    let posX = 100;
+    let posY = 100;
+    let sauts = 0;
+
+    function updatePosition() {
+      objet.style.left = posX + 'px';
+      objet.style.top = posY + 'px';
+    }
+
+    function sauter() {
+      changerCouleur();
+      son.play();
+      sauts++;
+      compteur.textContent = "Sauts : " + sauts;
+
+      objet.style.transform = 'translateY(-150px)';
+      setTimeout(() => {
+        objet.style.transform = 'translateY(0)';
+      }, 300);
+    }
+
+    function changerCouleur() {
+      const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+      objet.style.filter = `drop-shadow(0 0 10px ${randomColor})`;
+    }
+
+    document.addEventListener('keydown', function (e) {
+      const step = 10;
+      const maxX = window.innerWidth - objet.offsetWidth;
+      const maxY = window.innerHeight - objet.offsetHeight;
+
+      if (e.key === 'ArrowRight' && posX + step <= maxX) posX += step;
+      if (e.key === 'ArrowLeft' && posX - step >= 0) posX -= step;
+      if (e.key === 'ArrowDown' && posY + step <= maxY) posY += step;
+      if (e.key === 'ArrowUp' && posY - step >= 0) posY -= step;
+
+      updatePosition();
+    });
+  </script>
+</body>
+</html>

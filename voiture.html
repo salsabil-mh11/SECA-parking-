@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Voiture avec contrôle bouton</title>
+  <style>
+    canvas {
+      border: 2px solid black;
+      background-color: #d0f0ff;
+      display: block;
+      margin: 20px auto;
+    }
+    #controls {
+      text-align: center;
+      margin-top: 10px;
+    }
+    button {
+      font-size: 16px;
+      padding: 8px 15px;
+      margin: 0 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas" width="800" height="300"></canvas>
+
+<div id="controls">
+  <button id="startBtn">Démarrer</button>
+  <button id="stopBtn">Arrêter</button>
+</div>
+
+<script>
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  const voitureImage = new Image();
+  voitureImage.src = "car.png";
+
+  const voiture = {
+    x: 0,
+    y: 200,
+    vx: 2,
+    width: 100,
+    height: 50,
+    draw: function () {
+      ctx.drawImage(voitureImage, this.x, this.y - this.height, this.width, this.height);
+    }
+  };
+
+  let raf;       // variable pour stocker requestAnimationFrame
+  let isRunning = false; // état animation
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Gestion des rebonds horizontaux
+    if (voiture.x + voiture.width > canvas.width || voiture.x < 0) {
+      voiture.vx = -voiture.vx;
+    }
+
+    voiture.x += voiture.vx;
+    voiture.draw();
+
+    if (isRunning) {
+      raf = requestAnimationFrame(draw);
+    }
+  }
+
+  voitureImage.onload = function () {
+    voiture.draw(); // affiche la voiture au départ
+  };
+
+  // Boutons pour démarrer/arrêter
+  document.getElementById("startBtn").addEventListener("click", function () {
+    if (!isRunning) {
+      isRunning = true;
+      draw();
+    }
+  });
+
+  document.getElementById("stopBtn").addEventListener("click", function () {
+    isRunning = false;
+    if (raf) cancelAnimationFrame(raf);
+  });
+</script>
+
+</body>
+</html>

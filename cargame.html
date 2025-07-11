@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>V</title>
+  <style>
+    canvas {
+      border: 2px solid black;
+      background-color: #e0f7fa; /* ciel clair */
+      display: block;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="route" width="800" height="200"></canvas>
+
+<script>
+  const canvas = document.getElementById("route");
+  const ctx = canvas.getContext("2d");
+
+  // Position initiale de la voiture
+  let carX = 0;
+
+  // Fonction pour dessiner la voiture
+  function drawCar(x, y) {
+    // Carrosserie
+    ctx.fillStyle = "blue";
+    ctx.fillRect(x, y, 100, 30); // base
+    ctx.fillRect(x + 20, y - 20, 60, 20); // toit
+
+    // Roues
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.arc(x + 20, y + 30, 10, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(x + 80, y + 30, 10, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Fonction d'animation
+  function animate() {
+    // Efface le canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Dessine la route
+    ctx.fillStyle = "#555"; // gris foncé
+    ctx.fillRect(0, 160, canvas.width, 40);
+
+    // Dessine la voiture
+    drawCar(carX, 120);
+
+    // Déplace la voiture vers la droite
+    carX += 2;
+
+    // Revenir au début si elle sort de l’écran
+    if (carX > canvas.width) {
+      carX = -100; // repositionner en dehors à gauche
+    }   
+
+    // Redemander une nouvelle image (boucle)
+    requestAnimationFrame(animate);
+  }
+
+  // Lancer l’animation
+  animate();
+</script>
+
+</body>
+</html>

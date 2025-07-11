@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jeu de voiture simple</title>
+  <style>
+    body {
+      margin: 0;
+      text-align: center;
+      font-family: sans-serif;
+      background-color: #87ceeb;
+    }
+    canvas {
+      background-color: #e0f7fa;
+      border: 3px solid black;
+      display: block;
+      margin: 20px auto;
+    }
+    #restartBtn {
+      display: none;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: crimson;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #score {
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div id="score">Score : 0</div>
+<canvas id="canvas" width="800" height="600"></canvas>
+<button id="restartBtn">🔁 Rejouer</button>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const restartBtn = document.getElementById("restartBtn");
+const scoreDisplay = document.getElementById("score");
+
+const carImg = new Image();
+carImg.src = "car.png";
+
+const enemyImg = new Image();
+enemyImg.src = "obstacle.png";
+
+const player = {
+  x: 375,
+  y: 500,
+  width: 50,
+  height: 100,
+  speed: 5
+};
+
+let enemies = [];
+let keys = { left: false, right: false };
+let score = 0;
+let gameRunning = true;
+let animationId;
+
+// Détection clavier
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft") keys.left = true;
+  if (e.key === "ArrowRight") keys.right = true;
+});
+document.addEventListener("keyup", e => {
+  if (e.key === "ArrowLeft") keys.left = false;
+  if (e.key === "ArrowRight") keys.right = false;
+});
+
+// Crée un ennemi à une position aléatoire sur la route
+function createEnemy() {
+  const lanes = [250, 330, 410, 490]; // positions possibles sur la route
+  return {
+    x: lanes[Math.floor(Math.random() * lanes.length)],
+    y: -100,
+    width: 50,
+    height: 100,
+    speed: 4 + Math.random() * 2
+  };
+}
+
+// Vérifie collision simple rectangle
+function isColliding(r1, r2) {
+  return (
+    r1.x < r2.x + r2.width &&
+    r1.x + r1.width > r2.x &&
+    r1.y < r2.y + r2.height &&
+    r1.y + r1.height > r2.y
+  );
+}
+
+function updateGame() {
+  if (!gameRunning) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Dessine la route
+  ctx.fillStyle = "#2c2c2c";
+  ctx.fillRect(200, 0, 400, 600);
+
+// Lignes blanches animées (route qui défile)
+ctx.strokeStyle = "white";
+ctx.lineWidth = 4;
+ctx.setLineDash([20, 20]);
+ctx.beginPath();
+let lineOffset = performance.now() / 10 % 40; // effet continu
+for (let y = -40; y < canvas.height; y += 40) {
+  ctx.moveTo(400, y + lineOffset);
+  ctx.lineTo(400, y + 20 + lineOffset);
+}
+ctx.stroke();
+ctx.setLineDash([]);
+
+
+  // Déplacer voiture joueur
+  if (keys.left && player.x > 210) player.x -= player.speed;
+  if (keys.right && player.x + player.width < 590) player.x += player.speed;
+
+  // Affiche voiture joueur
+  ctx.drawImage(carImg, player.x, player.y, player.width, player.height);
+
+  // Met à jour ennemis
+  enemies.forEach((enemy, index) => {
+    enemy.y += enemy.speed;
+    ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy.width, enemy.height);
+
+    if (enemy.y > canvas.height) {
+      enemies[index] = createEnemy(); // remplacer
+      score += 10;
+      scoreDisplay.textContent = "Score : " + score;
+    }
+
+    if (isColliding(player, enemy)) {
+      gameOver();
+    }
+  });
+
+  animationId = requestAnimationFrame(updateGame);
+}
+
+function gameOver() {
+  gameRunning = false;
+  cancelAnimationFrame(animationId);
+  restartBtn.style.display = "inline-block";
+}
+
+// Redémarrer
+restartBtn.addEventListener("click", () => {
+  player.x = 375;
+  enemies = [createEnemy(), createEnemy()];
+  score = 0;
+  scoreDisplay.textContent = "Score : 0";
+  gameRunning = true;
+  restartBtn.style.display = "none";
+  updateGame();
+});
+
+// Démarrer après chargement des images
+let imagesLoaded = 0;
+function startIfReady() {
+  imagesLoaded++;
+  if (imagesLoaded === 2) {
+    enemies = [createEnemy(), createEnemy()];
+    updateGame();
+  }
+}
+carImg.onload = startIfReady;
+enemyImg.onload = startIfReady;
+</script>
+
+</body>
+</html>

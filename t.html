@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voitures Multiples</title>
+  <link rel="stylesheet" href="t.css">
+</head>
+<body>
+
+  <img src="img.png" alt="Voiture 1" id="voiture1">
+  <img src="v.png" alt="Voiture 2" id="voiture2">
+  <img src="c.png" alt="Voiture 3" id="voiture3">
+
+  <div class="selector">
+    <label><input type="checkbox" onchange="toggleCar('voiture1')" checked> 🚗 Voiture 1</label>
+    <label><input type="checkbox" onchange="toggleCar('voiture2')" checked> 🚙 Voiture 2</label>
+    <label><input type="checkbox" onchange="toggleCar('voiture3')"> 🚓 Voiture 3</label>
+  </div>
+
+  <div class="controls">
+    <button onclick="hGauche()">↖️</button>
+    <button onclick="Haut()">⬆️</button>
+    <button onclick="hDroite()">↗️</button>
+    <button onclick="Gauche()">⬅️</button>
+    <button onclick="arreter()">⏹ Stop</button>
+    <button onclick="sauter()">🪂 Sauter</button>
+    <button onclick="Droite()">➡️</button>
+    <button onclick="bGauche()">↙️</button>
+    <button onclick="Bas()">⬇️</button>
+    <button onclick="bDroite()">↘️</button>
+  </div>
+  <script src="t.js"></script>
+</body>
+</html>
