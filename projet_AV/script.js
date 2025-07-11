@@ -1,7 +1,5 @@
-
 const canvas = document.getElementById("scene");
 const ctx = canvas.getContext("2d");
-
 
 const voiture = new Image();
 voiture.src = "voiture.png";
@@ -15,7 +13,6 @@ camera.src = "camera.png";
 const borne = new Image();
 borne.src = "borne.png";
 
-
 let voitureY = 400; 
 let barriereOuverte = false;
 let afficherTicket = false;
@@ -26,51 +23,58 @@ let ticketInfos = {
   immatriculation: "123-TN-456",
   date: "" ,
   nom:"MHADHBI SALSABIL"
-
 };
 
 let plaqueCapturee = false;
 let ticketPris = false;
 
-
 function dessinerScene() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Route noire verticale
-  ctx.fillStyle = "#";
-  ctx.fillRect(400, 0, 300, canvas.height);
+  const routeX = 300;
+  const routeWidth = 300;
 
-  // Lignes blanches centrales
+  // === Si la barrière est ouverte, dessiner d'abord (donc en arrière-plan)
+  if (barriereOuverte) {
+    ctx.save();
+    ctx.translate(250, 320); 
+    ctx.rotate(-Math.PI / 2); 
+    ctx.drawImage(barriere, -70, -40, 620, 300); 
+    ctx.restore();
+  }
+
+  // === Route noire
+  ctx.fillStyle = "#111";
+  ctx.fillRect(routeX, 0, routeWidth, canvas.height);
+
+  // === Bordures grises
+  ctx.fillStyle = "#666";
+  ctx.fillRect(routeX - 10, 0, 8, canvas.height);
+  ctx.fillRect(routeX + routeWidth, 0, 8, canvas.height);
+
+  // === Lignes blanches centrales
   ctx.strokeStyle = "#fff";
   ctx.lineWidth = 4;
   for (let y = 0; y < canvas.height; y += 40) {
     ctx.beginPath();
-    ctx.moveTo(410, y);
-    ctx.lineTo(410, y + 28);
+    ctx.moveTo(routeX + routeWidth / 2, y);
+    ctx.lineTo(routeX + routeWidth / 2, y + 20);
     ctx.stroke();
   }
 
-
-  if (barriereOuverte) {
-    ctx.save();
-ctx.translate(280, 240); 
-ctx.rotate(-Math.PI / 2); 
-ctx.drawImage(barriere, -90, -20, 350, 180); 
-ctx.restore();
-
-  } else {
-    ctx.drawImage(barriere, 180, 160, 350, 180 );
+  // === Si barrière est fermée, on la dessine maintenant (devant)
+  if (!barriereOuverte) {
+    ctx.drawImage(barriere, 80, 20  , 600, 300);
   }
 
+  // === Voiture
+  ctx.drawImage(voiture, 380, voitureY, 140, 100);
 
-  ctx.drawImage(voiture, 350, voitureY, 100, 100);
-
-  
-  ctx.drawImage(camera, 600, 125, 70, 50);
-
-  
+  // === Caméra et borne
+  ctx.drawImage(camera, 600, 110, 80, 60);
   ctx.drawImage(borne, 300, 220, 160, 60);
 }
+
 
 
 function boucleAnimation() {
@@ -88,21 +92,20 @@ function boucleAnimation() {
   requestAnimationFrame(boucleAnimation);
 }
 
-
 function capturerPlaque() {
   if (!plaqueCapturee) {
     plaqueCapturee = true;
-    document.getElementById("capture-btn").style.display = "none";
-    const plaqueSpan = document.getElementById("immatriculation");
-    plaqueSpan.style.display = "inline-block";
-    plaqueSpan.innerText = ticketInfos.immatriculation;
-  } 
+    document.getElementById("immatriculation-box").style.display = "block";
+    document.getElementById("immatriculation-text").innerText = ticketInfos.immatriculation;
+    afficherMessage("✅ Plaque capturée !");
+  } else {
+    afficherMessage("ℹ️ Plaque déjà capturée.");
+  }
 }
-
 
 function getTicket() {
   if (!plaqueCapturee) {
-    alert("❌ Capture d'abord la plaque !");
+    afficherMessage("❌ Capture d'abord la plaque !");
     return;
   }
 
@@ -113,118 +116,130 @@ function getTicket() {
     const now = new Date();
     ticketInfos.date = now.toLocaleTimeString();
 
-    document.getElementById("ticket-html").style.display = "block";
+    genererTicket();
 
+    document.getElementById("ticket").style.display = "block";
 
-
-
-    // Message temporaire
-    const popup = document.getElementById("popup-ticket");
-    popup.style.display = "block";
-    popup.innerText = `🎟️ Ticket généré pour ${ticketInfos.nom}`;
-
+    afficherMessage(`🎟️ Ticket généré pour ${ticketInfos.nom}`);
   } else {
-    alert("🎟️ Ticket déjà généré.");
+    afficherMessage("🎟️ Ticket déjà généré.");
   }
-  genererTicket();
-
 }
-
-
 
 function ouvrirBarriere() {
   if (!plaqueCapturee || !ticketPris) {
-    alert("❌ Tu dois capturer la plaque et générer le ticket.");
+    afficherMessage("❌ Tu dois capturer la plaque et générer le ticket.");
     return;
   }
 
   if (!barriereOuverte) {
     barriereOuverte = true;
-   }
+    afficherMessage("✅ Barrière ouverte.");
+  } else {
+    afficherMessage("ℹ️ La barrière est déjà ouverte.");
+  }
 }
-
 
 function fermerBarriere(event) {
   if (!voiturePasse) {
-    alert("❌ La voiture n’a pas encore passé la barrière !");
+    afficherMessage("❌ La voiture n’a pas encore passé la barrière !");
     return;
   }
 
   barriereOuverte = false;
+  afficherMessage("✅ Barrière fermée.");
 
-  // Activer le style sur le bouton cliqué
+  // Supprimer la classe active sur tous les boutons
   document.querySelectorAll("button").forEach(btn => btn.classList.remove("active"));
   if (event) event.target.classList.add("active");
-
- 
 }
 
 function avancerVoiture() {
   if (!barriereOuverte) {
-    alert("⛔ Ouvre la barrière pour avancer.");
+    afficherMessage("⛔ Ouvre la barrière pour avancer.");
     return;
   }
 
   voitureEnMarche = true;
+  afficherMessage("🚗 La voiture avance.");
 }
 
 function arreterVoiture() {
   voitureEnMarche = false;
+  afficherMessage("⏸️ La voiture est arrêtée.");
 }
 
 function afficherDetails() {
+  if (!plaqueCapturee) {
+    afficherMessage("❌ Tu dois d'abord capturer la plaque !");
+    return;
+  }
+  if (!ticketPris) {
+    afficherMessage("❌ Vous devez d'abord générer un ticket.");
+    return;
+  }
+
+  // Remplir les infos dans le popup
+  document.getElementById("detail-nom").innerText = ticketInfos.nom || "N/A";
+  document.getElementById("detail-immatriculation").innerText = ticketInfos.immatriculation || "N/A";
+  document.getElementById("detail-date").innerText = ticketInfos.dateEntree || "--/--/----";
+  document.getElementById("detail-heure").innerText = ticketInfos.heureEntree || "--:--:--";
+  document.getElementById("detail-id").innerText = ticketInfos.id || "----------";
+  document.getElementById("detail-marque").innerText = ticketInfos.marque || "Toyota";
+  document.getElementById("detail-modele").innerText = ticketInfos.modele || "Corolla";
+  document.getElementById("detail-couleur").innerText = ticketInfos.couleur || "Gris";
+
+  // Afficher le popup et l'overlay
   document.getElementById("popup-details").style.display = "block";
+  document.getElementById("popup-overlay").style.display = "block";
 }
+
 
 function fermerDetails() {
-  document.getElementById("popup-details").style.display = "none";
+  const carte = document.getElementById("carte-details");
+  if (carte) carte.style.display = "none";
 }
 
-function afficherMessage(msg, color = "#3498db") {
-  const box = document.getElementById("message");
-  box.innerText = msg;
-  box.style.backgroundColor = color;
-}
-
-voiture.onload = dessinerScene;
-boucleAnimation();
 function genererTicket() {
-
   const now = new Date();
   const dateStr = now.toLocaleDateString();
   const heureStr = now.toLocaleTimeString();
 
+  // Générer un ID unique à 11 chiffres
   const ticketID = Math.floor(10000000000 + Math.random() * 90000000000);
 
-  
+  // Enregistre ces infos dans ticketInfos
+  ticketInfos.dateEntree = dateStr;
+  ticketInfos.heureEntree = heureStr;
+  ticketInfos.id = ticketID;
+
+  // Affiche dans le ticket HTML
   document.getElementById("ticket-date").innerText = dateStr;
-  document.getElementById("ticket-heure").innerText = heureStr;
+  document.getElementById("ticket-time").innerText = heureStr;
   document.getElementById("ticket-id").innerText = ticketID;
 
+  // Générer QR code
   const qrData = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=ID:${ticketID}`;
-  document.getElementById("qr-code").src = qrData;
-
+  document.getElementById("qrcode-img").src = qrData;
 }
 
-function afficherDetails() {
-  const carte = document.getElementById("carte-details");
-  carte.style.display = "block";
+function afficherMessage(msg, color = "#f39c12") {
+  const box = document.getElementById("message");
+  if (!box) return; // sécurité si message absent
+  box.innerText = msg;
+  box.style.backgroundColor = color;
+  box.style.display = "block";
 
-  const now = new Date();
-  const idVehicule = Math.floor(10000000000 + Math.random() * 89999999999); // ID à 11 chiffres
-
-  document.getElementById("detail-nom").innerText = ticketInfos.nom;
-  document.getElementById("detail-immatriculation").innerText = ticketInfos.immatriculation;
-  document.getElementById("detail-date").innerText = now.toLocaleDateString();
-  document.getElementById("detail-heure").innerText = now.toLocaleTimeString();
-
-  // Tu peux remplir les autres infos depuis un objet ticketInfos :
-  document.getElementById("detail-marque").innerText = ticketInfos.marque || "Toyota";
-  document.getElementById("detail-modele").innerText = ticketInfos.modele || "Corolla";
-  document.getElementById("detail-couleur").innerText = ticketInfos.couleur || "Gris";
-  document.getElementById("detail-id").innerText = idVehicule;
+  // Disparaît après 3 secondes
+  setTimeout(() => {
+    box.style.display = "none";
+  }, 3000);
 }
 
+// Chargement et lancement animation
+voiture.onload = dessinerScene;
+boucleAnimation();
 function fermerDetails() {
-  document.getElementById("carte-details").style.display = "none";
+  document.getElementById("popup-details").style.display = "none";
+  document.getElementById("popup-overlay").style.display = "none";
 }
