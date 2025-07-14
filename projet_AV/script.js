@@ -17,11 +17,14 @@ camera.src = "camera.png";
 const borne = new Image();
 borne.src = "borne.png";
 
-let voitureY = 350; 
+
 let barriereOuverte = false;
 let afficherTicket = false;
 let voiturePasse = false;
 let voitureEnMarche = false;
+let voitureVisible = false;
+let voitureY = canvas.height + 50;
+
 
 let ticketInfos = {
   immatriculation: "123-TN-456",
@@ -66,7 +69,10 @@ function dessinerScene() {
     ctx.lineTo(routeX + routeWidth / 2, y + 20);
     ctx.stroke();
   }
+if (voitureVisible) {
   ctx.drawImage(voiture, 380, voitureY, 140, 110);
+}
+
 
   if (!barriereOuverte) {
     ctx.drawImage(barriere, 80, 10  , 600, 300);
@@ -97,6 +103,12 @@ function boucleAnimation() {
 
 
 function capturerPlaque() {
+  if (!voitureVisible) {
+    afficherMessage("aucune voiture apparue");
+    return;
+  }
+
+
   if (!plaqueCapturee) {
     plaqueCapturee = true;
     document.getElementById("immatriculation-box").style.display = "block";
@@ -239,4 +251,110 @@ boucleAnimation();
 function fermerDetails() {
   document.getElementById("popup-details").style.display = "none";
   document.getElementById("popup-overlay").style.display = "none";
+}
+
+
+function resetSimulation() {
+  voitureY = 350;
+  barriereOuverte = false;
+  afficherTicket = false;
+  voiturePasse = false;
+  voitureEnMarche = false;
+  ticketPris = false;
+  plaqueCapturee = false;
+
+  ticketInfos = {
+    immatriculation: "123-TN-456",
+    date: "",
+    nom: "MHADHBI SALSABIL"
+  };
+
+  document.getElementById("ticket").style.display = "none";
+  document.getElementById("immatriculation-box").style.display = "none";
+  fermerDetails();
+  dessinerScene();
+  afficherMessage("🔄 Simulation réinitialisée.");
+}
+function resetSimulation() {
+  voitureY = 350;
+  barriereOuverte = false;
+  afficherTicket = false;
+  voiturePasse = false;
+  voitureEnMarche = false;
+  ticketPris = false;
+  plaqueCapturee = false;
+
+  ticketInfos = {
+    immatriculation: "123-TN-456",
+    date: "",
+    nom: "MHADHBI SALSABIL"
+  };
+
+  document.getElementById("ticket").style.display = "none";
+  document.getElementById("immatriculation-box").style.display = "none";
+  fermerDetails();
+  dessinerScene();
+  afficherMessage("🔄 Simulation réinitialisée.");
+}
+function resetSimulation() {
+  voitureY = 350;
+  barriereOuverte = false;
+  afficherTicket = false;
+  voiturePasse = false;
+  voitureEnMarche = false;
+  ticketPris = false;
+  plaqueCapturee = false;
+
+  ticketInfos = {
+    immatriculation: "123-TN-456",
+    date: "",
+    nom: "MHADHBI SALSABIL"
+  };
+
+  document.getElementById("ticket").style.display = "none";
+  document.getElementById("immatriculation-box").style.display = "none";
+  fermerDetails();
+  dessinerScene();
+  afficherMessage("🔄 Simulation réinitialisée.");
+}
+
+
+function resetSimulation() {
+  voitureY = canvas.height + 50;
+  barriereOuverte = false;
+  voitureVisible = false;  
+  afficherTicket = false;
+  voiturePasse = false;
+  voitureEnMarche = false;
+  ticketPris = false;
+  plaqueCapturee = false;
+
+  ticketInfos = {
+    immatriculation: "123-TN-456",
+    date: "",
+    nom: "MHADHBI SALSABIL"
+  };
+
+  document.getElementById("ticket").style.display = "none";
+  document.getElementById("immatriculation-box").style.display = "none";
+  fermerDetails();
+  dessinerScene();
+  afficherMessage("🔄 Simulation réinitialisée.");
+}
+
+function apparaitre(){
+  if(voitureVisible) return ;
+  voitureVisible = true;
+
+  
+  const interval=setInterval(()=>{
+    if (voitureY <=350){
+      voitureY=350;
+      
+      clearInterval(interval);
+    }
+    else{
+      voitureY-=2;
+    }
+  },16);
 }

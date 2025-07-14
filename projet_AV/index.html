@@ -5,6 +5,15 @@
   <title>SECA PARKING </title>
   <link rel="stylesheet" href="style.css" />
   <style>
+    .scene-container {
+  position: relative;
+  transition: transform 0.6s ease;
+}
+
+.scene-container.transition-gauche {
+  transform: translateX(-90px); /* tu choisis combien tu veux */
+}
+
     body {
       margin: 0;
       padding: 0;
@@ -74,6 +83,7 @@
       margin: 10px 0;
     }
 
+    
     .controls {
       margin: 20px;
       display: flex;
@@ -151,15 +161,15 @@
 
 
 
-
+<div id="scene-container" class="scene-container">
   <div class="header">
+        <button id="reset-btn" onclick="resetSimulation()" class="btn yellow" >Reset🔄</button>
+
     <button id="fermer-btn" onclick="fermerBarriere(event)" class="btn yellow">fermer la barrière</button>
     <button id="ouvrir-btn" onclick="ouvrirBarriere()" class="btn yellow">ouvrir la barrière</button>
     <button id="capture-btn" onclick="capturerPlaque()" class="btn yellow">Capturer la plaque</button>
     <button id="details-btn" onclick="afficherDetails()" class="btn yellow">Voir les détails</button>
   </div>
-
-
 
   <div class="main-container">
     <canvas id="scene" width="900" height="500"></canvas>
@@ -203,10 +213,12 @@
     <button onclick="avancerVoiture()" class="btn green">AVANCER</button>
     <button onclick="arreterVoiture()" class="btn red">ARRÊTER</button>
     <button onclick="getTicket()" class="btn yellow">Get ticket</button>
+        <button class="btn yellow" onclick="apparaitre()">🔽 Faire apparaître</button>
   </div>
 
 
   <div id="message"></div>
+  </div>
 
 
   <script src="script.js"></script>
