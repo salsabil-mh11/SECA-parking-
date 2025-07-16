@@ -1,65 +1,82 @@
+const voiture = new Image();
+const kio = new Image();
+const camera = new Image();
+const barriereFermee = new Image();
+const barriereOuverture = new Image();
+const barriereOuverte = new Image();
+const borne = new Image();
+
+let imagesChargees = 0;
+const totalImages = 7;
+
+const positionBarriere = {
+  fermee: { x: 140, y: 10 },
+  ouverture: { x: 140, y: 10 },
+  ouverte: { x: 140, y: 10 } 
+};
+
+
+function verifierChargementImages() {
+  imagesChargees++;
+  if (imagesChargees === totalImages) {
+    dessinerScene();
+    boucleAnimation();
+  }
+}
+
+voiture.onload = verifierChargementImages;
+kio.onload = verifierChargementImages;
+camera.onload = verifierChargementImages;
+barriereFermee.onload = verifierChargementImages;
+barriereOuverture.onload = verifierChargementImages;
+barriereOuverte.onload = verifierChargementImages;
+borne.onload = verifierChargementImages;
+
+
+
 const canvas = document.getElementById("scene");
 const ctx = canvas.getContext("2d");
 
-const voiture = new Image();
 voiture.src = "voiture.png";
-
-
-const kio = new Image();
-kio.src = "kio.png";
-
-const barriere = new Image();
-barriere.src = "barriere.png";
-
-const camera = new Image();
+kio.src = "kio2.png";
+barriereFermee.src = "barriere_fermee.png";
+barriereOuverture.src = "barriere_ouverture.png";
+barriereOuverte.src = "barriere_ouverte.png";
 camera.src = "camera.png";
-
-const borne = new Image();
 borne.src = "borne.png";
 
-
-let barriereOuverte = false;
+const barriereX = 140;
+const barriereY = 10;
+let currentBarriere = barriereFermee;
+let EstbarriereOuverte = false;
 let afficherTicket = false;
 let voiturePasse = false;
 let voitureEnMarche = false;
 let voitureVisible = false;
 let voitureY = canvas.height + 50;
 
-
 let ticketInfos = {
   immatriculation: "123-TN-456",
   date: "" ,
   nom:"MHADHBI SALSABIL"
 };
-
 let plaqueCapturee = false;
 let ticketPris = false;
 
+
+
 function dessinerScene() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+  // 🛣️ Route
   const routeX = 300;
   const routeWidth = 300;
-
-  if (barriereOuverte) {
-    ctx.save();
-    ctx.translate(240, 320); 
-    ctx.rotate(-Math.PI / 2); 
-    ctx.drawImage(barriere, -70, -70, 650, 300); 
-    ctx.restore();
-  }
 
   ctx.fillStyle = "#111";
   ctx.fillRect(routeX, 0, routeWidth, canvas.height);
 
- 
   ctx.fillStyle = "#666";
   ctx.fillRect(routeX - 10, 0, 8, canvas.height);
   ctx.fillRect(routeX + routeWidth, 0, 8, canvas.height);
-
-
-  
-
 
   ctx.strokeStyle = "#fff";
   ctx.lineWidth = 4;
@@ -69,29 +86,35 @@ function dessinerScene() {
     ctx.lineTo(routeX + routeWidth / 2, y + 20);
     ctx.stroke();
   }
-if (voitureVisible) {
-  ctx.drawImage(voiture, 380, voitureY, 140, 110);
-}
 
-
-  if (!barriereOuverte) {
-    ctx.drawImage(barriere, 80, 10  , 600, 300);
+ 
+  if (voitureVisible) {
+    ctx.drawImage(voiture, 375, voitureY, 160, 150);
   }
 
-  
 
-   ctx.drawImage(kio, 190, 250, 100, 250); 
+  if (currentBarriere === barriereFermee) {
+    ctx.drawImage(barriereFermee, 140, 10, 500, 300);
+  } else if (currentBarriere === barriereOuverture) {
+    ctx.drawImage(barriereOuverture, 90,-120, 495, 415); 
+  } else if (currentBarriere === barriereOuverte) {
+    ctx.drawImage(barriereOuverte, 10, -190, 420, 470); 
+  }
 
+
+  ctx.drawImage(kio, 580, 290, 180, 220);
   ctx.drawImage(camera, 600, 80, 80, 60);
   ctx.drawImage(borne, 0, 1, 1, 1);
 }
 
 
 
+
+
 function boucleAnimation() {
   if (voitureEnMarche) {
     voitureY -= 2;
-    if (voitureY <= 150) {
+    if (voitureY <= 50) {
       voiturePasse = true;
     }
   }
@@ -111,7 +134,10 @@ function capturerPlaque() {
 
   if (!plaqueCapturee) {
     plaqueCapturee = true;
+
     document.getElementById("immatriculation-box").style.display = "block";
+    document.getElementById("scene-container").classList.add("transition-gauche");
+
     document.getElementById("immatriculation-text").innerText = ticketInfos.immatriculation;
   } else {
     afficherMessage("Plaque déjà capturée.");
@@ -135,40 +161,58 @@ function getTicket() {
 
     document.getElementById("ticket").style.display = "block";
 
-    afficherMessage(`🎟️ Ticket généré pour ${ticketInfos.nom}`);
+
+    afficherMessage(` Ticket généré pour ${ticketInfos.nom}`);
   } else {
-    afficherMessage("🎟️ Ticket déjà généré.");
+    afficherMessage(" Ticket déjà généré.");
   }
 }
 
 function ouvrirBarriere() {
   if (!plaqueCapturee || !ticketPris) {
-    afficherMessage("❌ Tu dois capturer la plaque et générer le ticket.");
+    afficherMessage("Tu dois capturer la plaque et générer le ticket.");
     return;
   }
 
-  if (!barriereOuverte) {
-    barriereOuverte = true;
-  } 
+  currentBarriere = barriereFermee;
+  dessinerScene();
+
+  setTimeout(() => {
+    currentBarriere = barriereOuverture;  
+    dessinerScene();
+
+    setTimeout(() => {
+      currentBarriere = barriereOuverte;  
+      dessinerScene();
+      EstbarriereOuverte = true;          
+    }, 500);
+  }, 500);
 }
+
 
 function fermerBarriere(event) {
   if (!voiturePasse) {
-    afficherMessage("❌ La voiture n’a pas encore passé la barrière !");
+    afficherMessage(" La voiture n’a pas encore passé la barrière !");
     return;
   }
 
-  barriereOuverte = false;
+  currentBarriere = barriereOuverture;
+  dessinerScene();
 
-
+  setTimeout(() => {
+    currentBarriere = barriereFermee;
+    dessinerScene();
+    EstbarriereOuverte = false;
+  }, 500);
 
   document.querySelectorAll("button").forEach(btn => btn.classList.remove("active"));
   if (event) event.target.classList.add("active");
 }
 
+
 function avancerVoiture() {
-  if (!barriereOuverte) {
-    afficherMessage("⛔ Ouvre la barrière pour avancer.");
+  if (!EstbarriereOuverte) {
+    afficherMessage(" Ouvre la barrière pour avancer.");
     return;
   }
 
@@ -254,80 +298,20 @@ function fermerDetails() {
 }
 
 
-function resetSimulation() {
-  voitureY = 350;
-  barriereOuverte = false;
-  afficherTicket = false;
-  voiturePasse = false;
-  voitureEnMarche = false;
-  ticketPris = false;
-  plaqueCapturee = false;
 
-  ticketInfos = {
-    immatriculation: "123-TN-456",
-    date: "",
-    nom: "MHADHBI SALSABIL"
-  };
 
-  document.getElementById("ticket").style.display = "none";
-  document.getElementById("immatriculation-box").style.display = "none";
-  fermerDetails();
-  dessinerScene();
-  afficherMessage("🔄 Simulation réinitialisée.");
-}
-function resetSimulation() {
-  voitureY = 350;
-  barriereOuverte = false;
-  afficherTicket = false;
-  voiturePasse = false;
-  voitureEnMarche = false;
-  ticketPris = false;
-  plaqueCapturee = false;
-
-  ticketInfos = {
-    immatriculation: "123-TN-456",
-    date: "",
-    nom: "MHADHBI SALSABIL"
-  };
-
-  document.getElementById("ticket").style.display = "none";
-  document.getElementById("immatriculation-box").style.display = "none";
-  fermerDetails();
-  dessinerScene();
-  afficherMessage("🔄 Simulation réinitialisée.");
-}
-function resetSimulation() {
-  voitureY = 350;
-  barriereOuverte = false;
-  afficherTicket = false;
-  voiturePasse = false;
-  voitureEnMarche = false;
-  ticketPris = false;
-  plaqueCapturee = false;
-
-  ticketInfos = {
-    immatriculation: "123-TN-456",
-    date: "",
-    nom: "MHADHBI SALSABIL"
-  };
-
-  document.getElementById("ticket").style.display = "none";
-  document.getElementById("immatriculation-box").style.display = "none";
-  fermerDetails();
-  dessinerScene();
-  afficherMessage("🔄 Simulation réinitialisée.");
-}
 
 
 function resetSimulation() {
   voitureY = canvas.height + 50;
-  barriereOuverte = false;
+  EstbarriereOuverte = false;
   voitureVisible = false;  
   afficherTicket = false;
   voiturePasse = false;
   voitureEnMarche = false;
   ticketPris = false;
   plaqueCapturee = false;
+  currentBarriere = barriereFermee;
 
   ticketInfos = {
     immatriculation: "123-TN-456",
@@ -358,3 +342,7 @@ function apparaitre(){
     }
   },16);
 }
+
+
+
+

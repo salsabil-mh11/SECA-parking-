@@ -5,13 +5,29 @@
   <title>SECA PARKING </title>
   <link rel="stylesheet" href="style.css" />
   <style>
+    .btn {
+  padding: 12px 18px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+
+
+.btn.transition-ticket {
+  transform: translateX(-80px);  
+  opacity: 0.8;
+}
+
     .scene-container {
   position: relative;
   transition: transform 0.6s ease;
 }
 
 .scene-container.transition-gauche {
-  transform: translateX(-90px); /* tu choisis combien tu veux */
+  transform: translateX(-90px); 
 }
 
     body {
@@ -26,20 +42,13 @@
 
     .header {
       display: flex;
-      justify-content: center;
+
       gap: 15px;
       margin: 10px;
       flex-wrap: wrap;
     }
 
-    .btn {
-      padding: 12px 18px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
+ 
 
     .yellow { background-color: #ffdb4d; color: #333; }
     .green { background-color: #27ae60; color: white; }
@@ -87,7 +96,7 @@
     .controls {
       margin: 20px;
       display: flex;
-      gap: 20px;
+      gap: 20px;    
     }
 
     .immatriculation-box {
@@ -163,7 +172,7 @@
 
 <div id="scene-container" class="scene-container">
   <div class="header">
-        <button id="reset-btn" onclick="resetSimulation()" class="btn yellow" >Reset🔄</button>
+    <button id="reset-btn" onclick="resetSimulation()" class="btn yellow" >Reset🔄</button>
 
     <button id="fermer-btn" onclick="fermerBarriere(event)" class="btn yellow">fermer la barrière</button>
     <button id="ouvrir-btn" onclick="ouvrirBarriere()" class="btn yellow">ouvrir la barrière</button>
